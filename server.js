@@ -2,20 +2,27 @@ const express = require('express');
 const bodyParser = require('body-parser')
 const MongoClient = require('mongodb').MongoClient
 const app = express();
+const PORT = 3000
+require('dotenv').config()
 
-MongoClient.connect('mongodb+srv://floreslui242:zooman12@100hourproject.oqwole6.mongodb.net/?retryWrites=true&w=majority', { useUnifiedTopology: true })
+let db,
+    connectionString = process.env.DB_STRING,
+    dbName = 'quotes'
+
+MongoClient.connect(connectionString, { useUnifiedTopology: true })
     .then(client => {
-        console.log('Connected to Database')
-        const db = client.db('100HourProject')
+        console.log(`Connected to  ${dbName} Database`)
+        db = client.db(dbName)
         const quotesCollection = db.collection('quotes')
 
+        app.use(express.static('public'))
         app.set('view engine', 'ejs')
-        res.render(view, locals)
+        app.use(bodyParser.json())
 
         app.use(bodyParser.urlencoded({ extended: true }))
 
-        app.listen(3000, function () {
-            console.log('listening on 3000')
+        app.listen(process.env.PORT || PORT, () => {
+            console.log(`Server running on port ${PORT}`)
         })
 
 
@@ -38,6 +45,21 @@ MongoClient.connect('mongodb+srv://floreslui242:zooman12@100hourproject.oqwole6.
                 })
                 .catch(error => console.error(error))
         })
-    })
-
+        app.put('/quotes', (req, res) => {
+            quotesCollection.findOneAndUpdate(
+                { name: 'Yoda' },
+                {
+                    $set: {
+                        name: req.body.name,
+                        quote: req.body.quote
+                    }
+                },
+                {
+                    upsert: true
+                }
+            )
+                .then(result => { res.json('success') })
+                .catch(error => console.error(error))
+        })
+        })
     .catch(error => console.error(error))
