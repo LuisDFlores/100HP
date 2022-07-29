@@ -3,27 +3,41 @@ const bodyParser = require('body-parser')
 const MongoClient = require('mongodb').MongoClient
 const app = express();
 
-MongoClient.connect('mongodb-connection-string', (err, client) => {
-    // ... do something here
-})
+MongoClient.connect('mongodb+srv://floreslui242:zooman12@100hourproject.oqwole6.mongodb.net/?retryWrites=true&w=majority', { useUnifiedTopology: true })
+    .then(client => {
+        console.log('Connected to Database')
+        const db = client.db('100HourProject')
+        const quotesCollection = db.collection('quotes')
 
-MongoClient.connect(connectionString, (err, client) => {
-    if (err) return console.error(err)
-    console.log('Connected to Database')
-})
+        app.set('view engine', 'ejs')
+        res.render(view, locals)
+
+        app.use(bodyParser.urlencoded({ extended: true }))
+
+        app.listen(3000, function () {
+            console.log('listening on 3000')
+        })
 
 
-app.use(bodyParser.urlencoded({ extended: true }))
+        app.get('/', (req, res) => {
+            db.collection('quotes').find().toArray()
+                .then(results => {
+                res.render('index.ejs', { quotes: results })  
+            })
+            .catch(error => console.error(error)) 
+        })
 
-app.listen(3000, function () {
-    console.log('listening on 3000')
-})
+        app.get('/', (req, res) => {
+            res.sendFile(__dirname + '/index.html')
+        })
 
-app.get('/',(req,res)=>{
-    res.sendFile(__dirname + '/index.html')
-})
+        app.post('/quotes', (req, res) => {
+            quotesCollection.insertOne(req.body)
+                .then(result => {
+                    res.redirect('/')
+                })
+                .catch(error => console.error(error))
+        })
+    })
 
-app.post('/quotes', (req, res) => {
-    console.log(req.body)
-})
-
+    .catch(error => console.error(error))
