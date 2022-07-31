@@ -7,24 +7,21 @@ require('dotenv').config()
 
 let db,
     connectionString = process.env.DB_STRING,
-    dbName = 'quotes'
-
+    dbName = 'quotes',
+    quotesCollection
 MongoClient.connect(connectionString, { useUnifiedTopology: true })
     .then(client => {
         console.log(`Connected to  ${dbName} Database`)
         db = client.db(dbName)
-        const quotesCollection = db.collection('quotes')
-
-        app.use(express.static('public'))
-        app.set('view engine', 'ejs')
-        app.use(bodyParser.json())
-
+        quotesCollection = db.collection('quotes')
+    })
         app.use(bodyParser.urlencoded({ extended: true }))
-
+        app.set('view engine', 'ejs')
+        app.use(express.static('public'))
+        app.use(bodyParser.json())
         app.listen(process.env.PORT || PORT, () => {
-            console.log(`Server running on port ${PORT}`)
+        console.log(`Server running on port ${PORT}`)
         })
-
 
         app.get('/', (req, res) => {
             db.collection('quotes').find().toArray()
@@ -34,10 +31,6 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
             .catch(error => console.error(error)) 
         })
 
-        app.get('/', (req, res) => {
-            res.sendFile(__dirname + '/index.html')
-        })
-
         app.post('/quotes', (req, res) => {
             quotesCollection.insertOne(req.body)
                 .then(result => {
@@ -45,7 +38,7 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
                 })
                 .catch(error => console.error(error))
         })
-        
+
         app.put('/quotes', (req, res) => {
             quotesCollection.findOneAndUpdate(
                 { name: 'Yoda' },
@@ -59,13 +52,8 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
                     upsert: true
                 }
             )
-                .then(res => {
-                    if (res.ok) return res.json()
-                })
-                .then(response => {
-                    window.location.reload(true)
-                })
+                .then(result => { res.json('success') })
+                .catch(console.error)
         })
-        
-    .catch(error => console.error(error))
-    })
+    
+       

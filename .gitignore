@@ -1,3 +1,2 @@
 node_modules
 .env
-DB_STRING = mongodb+srv://floreslui242:zooman12@100hourproject.oqwole6.mongodb.net/?retryWrites=true&w=majority
