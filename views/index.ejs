@@ -4,11 +4,11 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Star Wars Quote App</title>
+    <title>Work Out Planner</title>
 </head>
 
 <body>
-    <h1>May Node and Express be with you.</h1>
+    <h1>Create DAILY WorkOut</h1>
 
     <form action="/quotes" method="POST">
         <input type="text" placeholder="name" name="name" />
@@ -24,23 +24,34 @@
                 <!-- Output name from the iterated quote object -->
                 <span>
                     <%= quotes[i].name %>
-                </span>:
+                </span>
                 <!-- Output quote from the iterated quote object -->
                 <span>
                     <%= quotes[i].quote %>
                 </span>
+                <span class="delete">delete </span>
             </li>
             <% } %>
-
-            <div>
-                <h2>Darth Vader invades!</h2>
-                <p>
-                    Replace first Yoda's quote with a quote written by Darth Vader
-                </p>
-                <button id="update-button">Replace Yoda's quote</button>
-            </div>
     </ul>
-    <script src="public/main.js"></script>
+
+    <div>
+        <p>
+            What the does the gym community have to say about that?
+        </p>
+        <button id="update-button">Find out</button>
+    </div>
+
+    <div>
+        <h2>Remove Quote</h2>
+        <p>
+            Get rid of the unworthy
+        </p>
+        <button id="delete-button">Delete the quote</button>
+    </div>
+
+    <div id="message"></div>
+
+    <script src="main.js"></script>
 </body>
 
 
